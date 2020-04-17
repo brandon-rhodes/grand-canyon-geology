@@ -56,7 +56,7 @@ def render():
     r = mapnik.Rule()
     line_symbolizer = mapnik.LineSymbolizer()
     line_symbolizer.stroke = mapnik.Color('rgb(50%,50%,50%)')
-    line_symbolizer.stroke_width = 1.0 # 0.1
+    line_symbolizer.stroke_width = 0.5 # 0.1
     r.symbols.append(line_symbolizer)
     s.rules.append(r)
 

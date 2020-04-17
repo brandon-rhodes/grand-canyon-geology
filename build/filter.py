@@ -2,6 +2,10 @@
 
 # Cut down a huge GeoJSON polygon file to something manageable.
 
+# To do the opposite:
+#
+# ln -f ../data/geolines.geojson tiny_lines.geojson && ln -f ../data/geopolys.geojson tiny_polys.geojson
+
 import argparse
 import json
 import sys
@@ -9,7 +13,8 @@ import sys
 def main(argv):
     parser = argparse.ArgumentParser(description='Filter our GeoJSON file')
     # parser.add_argument('path', help='Path to GeoJSON file')
-    args = parser.parse_args(argv)
+    # args =
+    parser.parse_args(argv)
 
     with open('../data/geolines.geojson') as f:
         geolines = json.load(f)
@@ -54,5 +59,3 @@ def main(argv):
 
 if __name__ == '__main__':
     main(sys.argv[1:])
-
-
