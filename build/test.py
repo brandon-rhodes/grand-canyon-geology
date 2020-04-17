@@ -49,15 +49,26 @@ def render():
         r.filter = mapnik.Filter("[unit] = '{}'".format(name))
         s.rules.append(r) # now add the rule to the style and we're done
 
-    m.append_style('My Style',s) # Styles are given names only as they are applied to the map
+    m.append_style('Polys Style', s)
 
-    ds = mapnik.Shapefile(file='ne_110m_admin_0_countries.shp')
+    s = mapnik.Style()
 
-    layer = mapnik.Layer('world') # new layer called 'world' (we could name it anything)
+    r = mapnik.Rule()
+    line_symbolizer = mapnik.LineSymbolizer()
+    line_symbolizer.stroke = mapnik.Color('rgb(50%,50%,50%)')
+    line_symbolizer.stroke_width = 1.0 # 0.1
+    r.symbols.append(line_symbolizer)
+    s.rules.append(r)
+
+    m.append_style('Lines Style', s)
+
+    # ds = mapnik.Shapefile(file='ne_110m_admin_0_countries.shp')
+
+    # layer = mapnik.Layer('world') # new layer called 'world' (we could name it anything)
     # note: layer.srs will default to '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'
 
-    layer.datasource = ds
-    layer.styles.append('My Style')
+    # layer.datasource = ds
+    # layer.styles.append('My Style')
     #m.layers.append(layer)
 
 
@@ -76,22 +87,35 @@ def render():
     #         "type": "MultiPolygon",
     #         "coordinates": [
 
-    layer = mapnik.Layer('Geolines')
+
+    # Command to create the tiny ones: "time ./filter.py"
+
     geolines_datasource = mapnik.Ogr(
         #file='geolines.geojson',
         #layer='geolines',
+        file='tiny_lines.geojson',
+        layer='tiny_lines',
+    )
+
+    geopolys_datasource = mapnik.Ogr(
         # file='geopolys.geojson',
         # layer='geopolys',
         file='tiny_polys.geojson',  # Command: "time ./filter.py"
         layer='tiny_polys',
-    )  # does this add a datasource?
+    )
 
-    layer.datasource = geolines_datasource
-    layer.styles.append('My Style')
-    m.layers.append(layer)
+    polys_layer = mapnik.Layer('Polys Layer')
+    polys_layer.datasource = geopolys_datasource
+    polys_layer.styles.append('Polys Style')
+    m.layers.append(polys_layer)
+
+    lines_layer = mapnik.Layer('Lines Layer')
+    lines_layer.datasource = geopolys_datasource
+    lines_layer.styles.append('Lines Style')
+    m.layers.append(lines_layer)
 
     # m.zoom_all()
-    #extent = mapnik.Box2d(-130.0, 30.0, -100.0, 45.0)
+
     bbox = mapnik.Box2d(-112.2500, 36.0000, -112.0000, 36.2500)
     merc_bbox = transform.forward(bbox)
     m.zoom_to_box(merc_bbox)
