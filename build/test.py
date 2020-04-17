@@ -10,7 +10,18 @@ import json
 import mapnik
 
 def render():
-    m = mapnik.Map(400,500)
+    merc_srs = (
+        '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0'
+        ' +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over'
+    )
+
+    longlat = mapnik.Projection(
+        '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'
+    )
+    merc = mapnik.Projection(merc_srs)
+    transform = mapnik.ProjTransform(longlat, merc)
+
+    m = mapnik.Map(400, 500, srs=merc_srs)
     m.background = mapnik.Color('white')
     #m.srs = '+proj=merc +ellps=WGS84 +datum=WGS84 +no_defs'
 
@@ -79,10 +90,11 @@ def render():
     layer.styles.append('My Style')
     m.layers.append(layer)
 
-    #m.zoom_all()
+    # m.zoom_all()
     #extent = mapnik.Box2d(-130.0, 30.0, -100.0, 45.0)
-    extent = mapnik.Box2d(-112.2500, 36.0000, -112.0000, 36.2500)
-    m.zoom_to_box(extent)
+    bbox = mapnik.Box2d(-112.2500, 36.0000, -112.0000, 36.2500)
+    merc_bbox = transform.forward(bbox)
+    m.zoom_to_box(merc_bbox)
 
 
     mapnik.render_to_file(m, 'world.png', 'png')
