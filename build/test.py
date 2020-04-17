@@ -6,6 +6,8 @@
 
 import mapnik
 
+f = mapnik.Filter("[unit] = 'water'")
+
 m = mapnik.Map(610,300)
 m.background = mapnik.Color('steelblue')
 
@@ -23,8 +25,10 @@ line_symbolizer = mapnik.LineSymbolizer()
 line_symbolizer.stroke = mapnik.Color('rgb(50%,50%,50%)')
 line_symbolizer.stroke_width = 0.0 #1.0  #0.1
 r.symbols.append(line_symbolizer) # add the symbolizer to the rule object
-s.rules.append(r) # now add the rule to the style and we're done
 
+r.filter = f
+
+s.rules.append(r) # now add the rule to the style and we're done
 m.append_style('My Style',s) # Styles are given names only as they are applied to the map
 
 ds = mapnik.Shapefile(file='ne_110m_admin_0_countries.shp')
@@ -41,6 +45,19 @@ layer.styles.append('My Style')
 
 #mapnik.Ogr(file='test_point_line.gpx')
 
+#mapnik.load_map(m, 'geopolys.geojson')
+
+# Data looks like:
+#     {
+#       "type": "Feature",
+#       "properties": {
+#         "unit": "water",
+#         "color": "#ebffff"
+#       },
+#       "geometry": {
+#         "type": "MultiPolygon",
+#         "coordinates": [
+
 layer = mapnik.Layer('Geolines')
 geolines_datasource = mapnik.Ogr(
     #file='geolines.geojson',
@@ -48,6 +65,7 @@ geolines_datasource = mapnik.Ogr(
     file='geopolys.geojson',
     layer='geopolys',
 )  # does this add a datasource?
+
 layer.datasource = geolines_datasource
 layer.styles.append('My Style')
 m.layers.append(layer)
