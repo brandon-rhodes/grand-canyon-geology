@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -ex
+
+IMAGE_NAME=gc
+
+if [ ! -f /usr/bin/docker ]
+then
+    echo Error: please apt install docker.io >&2
+    exit 2
+fi
+
+docker build -t "$IMAGE_NAME" . 1>&2
+
+exec docker run -ti \
+     --net=host \
+     -v $PWD:/work \
+     "$IMAGE_NAME" "$@"
