@@ -1,6 +1,9 @@
 # wget https://github.com/mapnik/mapnik/wiki/data/110m-admin-0-countries.zip
 # unzip 110m-admin-0-countries.zip
 
+# To see which version of Mapnik:
+# mapnik-config --version
+
 import mapnik
 
 m = mapnik.Map(610,300)
@@ -32,7 +35,10 @@ layer.datasource = ds
 layer.styles.append('My Style')
 
 m.layers.append(layer)
-m.zoom_all()
+#m.zoom_all()
+
+extent = mapnik.Box2d(-130.0, 30.0, -100.0, 45.0)
+m.zoom_to_box(extent)
 
 mapnik.render_to_file(m,'world.png', 'png')
 
