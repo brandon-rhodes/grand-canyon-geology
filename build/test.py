@@ -6,7 +6,7 @@
 
 import mapnik
 
-f = mapnik.Filter("[unit] = 'water'")
+#f = mapnik.Filter("[unit] = 'water'")
 
 m = mapnik.Map(610,300)
 m.background = mapnik.Color('white')
@@ -26,7 +26,7 @@ r.symbols.append(polygon_symbolizer) # add the symbolizer to the rule object
 # line_symbolizer.stroke_width = 0.0 #1.0  #0.1
 # r.symbols.append(line_symbolizer) # add the symbolizer to the rule object
 
-r.filter = f
+#r.filter = f
 
 s.rules.append(r) # now add the rule to the style and we're done
 m.append_style('My Style',s) # Styles are given names only as they are applied to the map
@@ -64,7 +64,7 @@ geolines_datasource = mapnik.Ogr(
     #layer='geolines',
     # file='geopolys.geojson',
     # layer='geopolys',
-    file='tiny_polys.geojson',  # time ./filter.py geopolys.geojson > OUT2
+    file='tiny_polys.geojson',  # Command: "time ./filter.py"
     layer='tiny_polys',
 )  # does this add a datasource?
 
