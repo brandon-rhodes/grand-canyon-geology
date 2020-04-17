@@ -11,27 +11,46 @@ def main(argv):
     # parser.add_argument('path', help='Path to GeoJSON file')
     args = parser.parse_args(argv)
 
+    with open('../data/geolines.geojson') as f:
+        geolines = json.load(f)
+
     with open('../data/geopolys.geojson') as f:
-        j = json.load(f)
+        geopolys = json.load(f)
 
     # Save feature metadata.
 
-    feature_colors = {
-        feature['properties']['unit']: feature['properties']['color']
-        for feature in j['features']
+    feature_data = {
+        'line_fgdc': {
+            feature['properties']['fgdc']: '_'
+            for feature in geolines['features']
+        },
+        'line_original': {
+            feature['properties']['original']: '_'
+            for feature in geolines['features']
+        },
+        'poly_color': {
+            feature['properties']['unit']: feature['properties']['color']
+            for feature in geopolys['features']
+        },
     }
-    with open('feature_colors.json', 'w') as f:
-        json.dump(feature_colors, f, indent=2)
+    with open('feature_data.json', 'w') as f:
+        json.dump(feature_data, f, indent=2)
 
     # Save a much smaller version of the dataset for testing.
 
-    j['features'] = [
-        feature for feature in j['features']
-        if feature['properties']['unit'] in ('Mr', 'water')
+    skip = len(geolines['features']) // 1000
+    geolines['features'] = geolines['features'][::skip]
+
+    geopolys['features'] = [
+        feature for feature in geopolys['features']
+        if feature['properties']['unit'] in ('Mr', 'Pc', 'water')
     ]
 
+    with open('tiny_lines.geojson', 'w') as f:
+        json.dump(geolines, f)
+
     with open('tiny_polys.geojson', 'w') as f:
-        json.dump(j, f)
+        json.dump(geopolys, f)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
