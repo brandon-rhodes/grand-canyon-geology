@@ -9,7 +9,7 @@ import mapnik
 f = mapnik.Filter("[unit] = 'water'")
 
 m = mapnik.Map(610,300)
-m.background = mapnik.Color('steelblue')
+m.background = mapnik.Color('white')
 
 #print(dir(mapnik))
 
@@ -17,14 +17,14 @@ s = mapnik.Style() # style object to hold rules
 r = mapnik.Rule() # rule object to hold symbolizers
 # to fill a polygon we create a PolygonSymbolizer
 polygon_symbolizer = mapnik.PolygonSymbolizer()
-polygon_symbolizer.fill = mapnik.Color('#f2eff9')
+polygon_symbolizer.fill = mapnik.Color('#000000') #'#f2eff9')
 r.symbols.append(polygon_symbolizer) # add the symbolizer to the rule object
 
 # to add outlines to a polygon we create a LineSymbolizer
-line_symbolizer = mapnik.LineSymbolizer()
-line_symbolizer.stroke = mapnik.Color('rgb(50%,50%,50%)')
-line_symbolizer.stroke_width = 0.0 #1.0  #0.1
-r.symbols.append(line_symbolizer) # add the symbolizer to the rule object
+# line_symbolizer = mapnik.LineSymbolizer()
+# line_symbolizer.stroke = mapnik.Color('rgb(50%,50%,50%)')
+# line_symbolizer.stroke_width = 0.0 #1.0  #0.1
+# r.symbols.append(line_symbolizer) # add the symbolizer to the rule object
 
 r.filter = f
 
@@ -62,8 +62,10 @@ layer = mapnik.Layer('Geolines')
 geolines_datasource = mapnik.Ogr(
     #file='geolines.geojson',
     #layer='geolines',
-    file='geopolys.geojson',
-    layer='geopolys',
+    # file='geopolys.geojson',
+    # layer='geopolys',
+    file='tiny_polys.geojson',  # time ./filter.py geopolys.geojson > OUT2
+    layer='tiny_polys',
 )  # does this add a datasource?
 
 layer.datasource = geolines_datasource
