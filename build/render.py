@@ -21,7 +21,7 @@ def render():
     merc = mapnik.Projection(merc_srs)
     transform = mapnik.ProjTransform(longlat, merc)
 
-    m = mapnik.Map(400, 500, srs=merc_srs)
+    m = mapnik.Map(1200, 620, srs=merc_srs)
     m.background = mapnik.Color('white')
     #m.srs = '+proj=merc +ellps=WGS84 +datum=WGS84 +no_defs'
 
@@ -39,13 +39,13 @@ def render():
     for name, color in feature_colors.items():
         r = mapnik.Rule() # rule object to hold symbolizers
         polygon_symbolizer = mapnik.PolygonSymbolizer()
+        color = color.encode('ascii')
+        if name in ('Mr', 'Pc', 'water'):
+            color = color[:3] + color[1:3] + color[1:3]
+        else:
+            color = '#ff0000' #'red'
         polygon_symbolizer.fill = mapnik.Color(color)
         r.symbols.append(polygon_symbolizer)
-        # to add outlines to a polygon we create a LineSymbolizer
-        # line_symbolizer = mapnik.LineSymbolizer()
-        # line_symbolizer.stroke = mapnik.Color('rgb(50%,50%,50%)')
-        # line_symbolizer.stroke_width = 0.0 #1.0  #0.1
-        # r.symbols.append(line_symbolizer) # add the symbolizer to the rule object
         r.filter = mapnik.Filter("[unit] = '{}'".format(name))
         s.rules.append(r) # now add the rule to the style and we're done
 
@@ -109,17 +109,18 @@ def render():
     polys_layer.styles.append('Polys Style')
     m.layers.append(polys_layer)
 
-    lines_layer = mapnik.Layer('Lines Layer')
-    lines_layer.datasource = geopolys_datasource
-    lines_layer.styles.append('Lines Style')
-    m.layers.append(lines_layer)
+    # lines_layer = mapnik.Layer('Lines Layer')
+    # lines_layer.datasource = geolines_datasource
+    # lines_layer.styles.append('Lines Style')
+    # m.layers.append(lines_layer)
 
     # m.zoom_all()
 
-    bbox = mapnik.Box2d(-112.2500, 36.0000, -112.0000, 36.2500)
+    #bbox = mapnik.Box2d(-112.2500, 36.0000, -112.0000, 36.2500)
+    #bbox = mapnik.Box2d(-114.00, 35.75, -111.5, 36.2500)
+    bbox = mapnik.Box2d(-115.00, 35.50, -111, 36.500)
     merc_bbox = transform.forward(bbox)
     m.zoom_to_box(merc_bbox)
-
 
     mapnik.render_to_file(m, 'world.png', 'png')
 

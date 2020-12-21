@@ -12,9 +12,8 @@ import sys
 
 def main(argv):
     parser = argparse.ArgumentParser(description='Filter our GeoJSON file')
-    # parser.add_argument('path', help='Path to GeoJSON file')
-    # args =
-    parser.parse_args(argv)
+    parser.add_argument('keeper', help='Layer to keep')
+    args = parser.parse_args(argv)
 
     with open('../data/geolines.geojson') as f:
         geolines = json.load(f)
@@ -48,14 +47,18 @@ def main(argv):
 
     geopolys['features'] = [
         feature for feature in geopolys['features']
-        if feature['properties']['unit'] in ('Mr', 'Pc', 'water')
+        if feature['properties']['unit'] in ('Mr', 'Pc', 'water', args.keeper)
     ]
+    print('Matched {} features'.format(sum(
+        1 for feature in geopolys['features']
+        if feature['properties']['unit'] == args.keeper
+    )))
 
     with open('tiny_lines.geojson', 'w') as f:
         json.dump(geolines, f)
 
     with open('tiny_polys.geojson', 'w') as f:
-        json.dump(geopolys, f)
+        json.dump(geopolys, f, indent=0, separators=(',', ':'))
 
 if __name__ == '__main__':
     main(sys.argv[1:])
